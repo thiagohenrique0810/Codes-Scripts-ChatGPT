@@ -39,7 +39,8 @@
   <script>
     $(document).ready(function() {
       // Adiciona nova linha na tabela
-      $(".adicionar-linha").click(function() {
+      $(".adicionar-linha").on('click',function(e) {
+        e.preventDefault();
         var linha = '<tr>' +
                       '<td><input type="text" class="form-control valor" name="de[]" value=""></td>' +
                       '<td><input type="text" class="form-control valor" name="ate[]" value=""></td>' +
@@ -47,6 +48,13 @@
                       '<td><button type="button" class="btn btn-danger btn-sm remover-linha">Remover</button></td>' +
                     '</tr>';
         $("#tabela").append(linha);
+        
+        $(".valor").maskMoney({
+          prefix: '',
+          allowNegative: false,
+          thousands: '.',
+          decimal: ','
+        });
       });
       
       // Remove linha da tabela
