@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Exemplo de autoload no final da página com Bootstrap</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <style>
+        .heightMax {
+            height: 50px;
+            padding: 50px;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Exemplo de autoload no final da página com Bootstrap</h1>
+      <ul id="items" class="list-group">
+      </ul>
+      <div id="loading" class="text-center mt-3 d-none">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      const items = $('#items');
+      const apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+      let loading = false;
+
+      // Define o número de itens a serem carregados por vez
+      const itemsPerLoad = 10;
+
+      // Define a função que carrega mais itens
+      function loadMoreItems() {
+        if (loading) {
+          return;
+        }
+
+        loading = true;
+
+        // Calcula a quantidade de itens já carregados
+        const loadedItems = items.find('li').length;
+
+        // Faz a solicitação à API
+        const requestUrl = `${apiUrl}?_start=${loadedItems}&_limit=${itemsPerLoad}`;
+        $('#loading').removeClass('d-none');
+        $.get(requestUrl, function(data) {
+          // Adiciona os novos itens à lista
+          data.forEach(function(item) {
+            const listItem = $('<li>').text(item.title).addClass('list-group-item heightMax');
+            items.append(listItem);
+          });
+          $('#loading').addClass('d-none');
+          loading = false;
+        });
+      }
+
+      // Define a função que verifica se o usuário rolou até o final da página
+      function handleScroll(event) {
+        const windowHeight = $(window).height();
+        const documentHeight = $(document).height();
+        const scrollPosition = $(window).scrollTop();
+        const distanceFromBottom = documentHeight - (scrollPosition + windowHeight);
+
+        if (distanceFromBottom < 200) {
+          loadMoreItems();
+        }
+      }
+
+      // Adiciona o evento de scroll ao objeto document usando jQuery
+      $(document).on('scroll', handleScroll);
+
+      // Carrega os primeiros itens
+      loadMoreItems();
+    </script>
+  </body>
+</html>
